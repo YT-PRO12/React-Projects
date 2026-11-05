@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CurrencyInput from "./components/CurrencyInput";
+import CurrencyInput from "./components/currencyInput";
 import useCurrency from "./hooks/useCurrency";
 
 function App() {
@@ -10,22 +10,54 @@ function App() {
 
   const [toCurrency, setToCurrency] = useState("INR");
 
-  const [convertedAmount, setConvertedAmount] = useState(0);
+  const [conversion, setConversion] = useState(null);
+  const [error, setError] = useState("");
 
   const currencies = ["USD", "INR", "EUR", "GBP", "JPY"];
 
   const rates = useCurrency(fromCurrency);
 
   const convertCurrency = () => {
-
-    if (!amount) return;
-
+    const numericAmount = Number(amount);
     const rate = rates[toCurrency];
 
-    const result = Number(amount) * rate;
+    if (String(amount).trim() === "" || !Number.isFinite(numericAmount) || numericAmount < 0) {
+      setError("Enter a valid, non-negative amount.");
+      setConversion(null);
+      return;
+    }
 
-    setConvertedAmount(result.toFixed(2));
+    if (typeof rate !== "number" || !Number.isFinite(rate) || rate <= 0) {
+      setError("Exchange rates are unavailable. Please try again.");
+      setConversion(null);
+      return;
+    }
+
+    const result = numericAmount * rate;
+    if (!Number.isFinite(result)) {
+      setError("Amount is too large to convert.");
+      setConversion(null);
+      return;
+    }
+
+    setError("");
+    setConversion({
+      amount: String(amount),
+      fromCurrency,
+      toCurrency,
+      rate,
+      result: result.toFixed(2),
+    });
   };
+
+  const currentConversion =
+    conversion &&
+    conversion.amount === String(amount) &&
+    conversion.fromCurrency === fromCurrency &&
+    conversion.toCurrency === toCurrency &&
+    conversion.rate === rates[toCurrency]
+      ? conversion
+      : null;
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
@@ -61,8 +93,14 @@ function App() {
             Convert
           </button>
 
-          <div className="text-center text-white text-2xl font-bold">
-            {convertedAmount} {toCurrency}
+          {error && (
+            <p className="text-red-300 text-sm" role="alert">
+              {error}
+            </p>
+          )}
+
+          <div className="text-center text-white text-2xl font-bold" aria-live="polite">
+            {currentConversion ? `${currentConversion.result} ${toCurrency}` : "—"}
           </div>
 
         </div>
