@@ -1,33 +1,47 @@
+import { useId } from "react";
+
 function CurrencyInput({
   amount,
   currency,
   currencies,
   onAmountChange,
-  onCurrencyChange
+  onCurrencyChange,
+  readOnly = false,
+  amountLabel = "Amount",
+  currencyLabel = "Currency",
 }) {
+  const id = useId();
 
   return (
     <div className="flex gap-3">
-
+      <label className="sr-only" htmlFor={id + "-amount"}>
+        {amountLabel}
+      </label>
       <input
+        id={id + "-amount"}
         type="number"
         value={amount}
-        onChange={(e) => onAmountChange(e.target.value)}
+        onChange={(event) => onAmountChange(event.target.value)}
+        readOnly={readOnly}
+        min="0"
         className="w-full rounded-lg p-3"
       />
 
+      <label className="sr-only" htmlFor={id + "-currency"}>
+        {currencyLabel}
+      </label>
       <select
+        id={id + "-currency"}
         value={currency}
-        onChange={(e) => onCurrencyChange(e.target.value)}
+        onChange={(event) => onCurrencyChange(event.target.value)}
         className="rounded-lg p-3"
       >
-        {currencies.map((currency) => (
-          <option key={currency} value={currency}>
-            {currency}
+        {currencies.map((option) => (
+          <option key={option} value={option}>
+            {option}
           </option>
         ))}
       </select>
-
     </div>
   );
 }
