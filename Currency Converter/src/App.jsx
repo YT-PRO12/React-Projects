@@ -72,6 +72,8 @@ function App() {
 
           <CurrencyInput
             amount={amount}
+            amountLabel="Amount to convert"
+            currencyLabel="Source currency"
             currency={fromCurrency}
             currencies={currencies}
             onAmountChange={setAmount}
@@ -79,7 +81,10 @@ function App() {
           />
 
           <CurrencyInput
-            amount=""
+            amount={currentConversion ? currentConversion.result : ""}
+            readOnly
+            amountLabel="Converted amount"
+            currencyLabel="Target currency"
             currency={toCurrency}
             currencies={currencies}
             onAmountChange={() => {}}
