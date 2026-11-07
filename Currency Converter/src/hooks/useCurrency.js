@@ -15,10 +15,28 @@ function useCurrency(currency) {
         );
         if (!response.ok) throw new Error("Currency request failed");
         const result = await response.json();
-        if (result.result !== "success" || !result.rates) {
+        if (
+          result?.result !== "success" ||
+          !result.rates ||
+          typeof result.rates !== "object" ||
+          Array.isArray(result.rates)
+        ) {
           throw new Error("Currency response is unavailable");
         }
-        if (!controller.signal.aborted) setData(result.rates);
+
+        const validRates = Object.fromEntries(
+          Object.entries(result.rates).filter(
+            ([code, rate]) =>
+              /^[A-Z]{3}$/.test(code) &&
+              typeof rate === "number" &&
+              Number.isFinite(rate) &&
+              rate > 0
+          )
+        );
+        if (Object.keys(validRates).length === 0) {
+          throw new Error("No valid exchange rates were returned");
+        }
+        if (!controller.signal.aborted) setData(validRates);
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Could not load exchange rates", error);
