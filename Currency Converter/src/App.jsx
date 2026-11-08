@@ -76,8 +76,16 @@ function App() {
             currencyLabel="Source currency"
             currency={fromCurrency}
             currencies={currencies}
-            onAmountChange={setAmount}
-            onCurrencyChange={setFromCurrency}
+            onAmountChange={(value) => {
+              setAmount(value);
+              setError("");
+              setConversion(null);
+            }}
+            onCurrencyChange={(value) => {
+              setFromCurrency(value);
+              setError("");
+              setConversion(null);
+            }}
           />
 
           <CurrencyInput
@@ -88,7 +96,11 @@ function App() {
             currency={toCurrency}
             currencies={currencies}
             onAmountChange={() => {}}
-            onCurrencyChange={setToCurrency}
+            onCurrencyChange={(value) => {
+              setToCurrency(value);
+              setError("");
+              setConversion(null);
+            }}
           />
 
           <button
