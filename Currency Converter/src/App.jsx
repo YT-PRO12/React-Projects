@@ -68,7 +68,13 @@ function App() {
           💱 Currency Converter
         </h1>
 
-        <div className="space-y-4">
+        <form
+          className="space-y-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            convertCurrency();
+          }}
+        >
 
           <CurrencyInput
             amount={amount}
@@ -104,7 +110,7 @@ function App() {
           />
 
           <button
-            onClick={convertCurrency}
+            type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700"
           >
             Convert
@@ -120,7 +126,7 @@ function App() {
             {currentConversion ? `${currentConversion.result} ${toCurrency}` : "—"}
           </div>
 
-        </div>
+        </form>
 
       </div>
 
