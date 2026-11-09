@@ -1,16 +1,48 @@
-# React + Vite
+# Currency Converter — React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small React currency-conversion application with an accessible amount form, currency selectors, and defensive exchange-rate requests.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Choose a source and target from USD, INR, EUR, GBP, and JPY.
+- Enter a non-negative amount and press **Convert** or **Enter** to calculate.
+- Read the converted amount in a read-only, labeled output field.
+- See an error if the amount is invalid or exchange rates are unavailable.
+- Changing input clears an earlier result so stale values are not presented as a new conversion.
+- Abort obsolete exchange-rate requests when the source currency changes.
 
-## React Compiler
+## Run locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+From the `Currency Converter` directory:
 
-## Expanding the ESLint configuration
+```bash
+npm ci
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+For a production bundle and static review:
+
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+
+This project uses React, Vite, and Tailwind CSS. Consult `package.json` for installed package versions.
+
+## Rates and reliability
+
+The client requests `https://open.er-api.com/v6/latest/{currency}` and only accepts positive finite numeric rates with three-letter currency codes. Rate availability, update frequency, and allowed usage depend on the external provider; no claim is made that conversions represent live tradable bank rates.
+
+The client does not collect bank information or execute transfers. It is a browser demonstration, not a payment or financial advice application. Network failures clear the rate table instead of presenting fabricated exchange rates.
+
+## Manual verification
+
+1. Convert a positive amount, then change the target currency; the previous result should clear.
+2. Press Enter while focused on the amount field; the form should submit.
+3. Try empty, negative, and extremely large amounts; invalid conversions should show an error.
+4. Throttle the network and switch source currencies quickly; obsolete responses must not replace the latest rates.
+5. Simulate an API failure and confirm the page does not show a newly calculated amount.
+6. Check visible focus, keyboard-only navigation, and mobile layouts.
+
+These are test scenarios, not claims of automated end-to-end test coverage.
