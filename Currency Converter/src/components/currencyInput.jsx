@@ -20,6 +20,8 @@ function CurrencyInput({
       <input
         id={id + "-amount"}
         type="number"
+        inputMode="decimal"
+        step="any"
         value={amount}
         onChange={(event) => onAmountChange(event.target.value)}
         readOnly={readOnly}
