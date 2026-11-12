@@ -19,7 +19,8 @@ function useCurrency(currency) {
           result?.result !== "success" ||
           !result.rates ||
           typeof result.rates !== "object" ||
-          Array.isArray(result.rates)
+          Array.isArray(result.rates) ||
+          (result.base_code != null && result.base_code !== currency)
         ) {
           throw new Error("Currency response is unavailable");
         }
