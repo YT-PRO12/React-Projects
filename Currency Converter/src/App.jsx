@@ -19,7 +19,7 @@ function App() {
 
   const convertCurrency = () => {
     const numericAmount = Number(amount);
-    const rate = rates[toCurrency];
+    const rate = fromCurrency === toCurrency ? 1 : rates[toCurrency];
 
     if (String(amount).trim() === "" || !Number.isFinite(numericAmount) || numericAmount < 0) {
       setError("Enter a valid, non-negative amount.");
@@ -55,7 +55,7 @@ function App() {
     conversion.amount === String(amount) &&
     conversion.fromCurrency === fromCurrency &&
     conversion.toCurrency === toCurrency &&
-    conversion.rate === rates[toCurrency]
+    conversion.rate === (fromCurrency === toCurrency ? 1 : rates[toCurrency])
       ? conversion
       : null;
 
