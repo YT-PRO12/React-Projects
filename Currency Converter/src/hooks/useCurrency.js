@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
 function useCurrency(currency) {
-  const [data, setData] = useState({});
+  const [snapshot, setSnapshot] = useState({ base: null, rates: {} });
 
   useEffect(() => {
     const controller = new AbortController();
-    setData({});
+    setSnapshot({ base: currency, rates: {} });
 
     async function loadRates() {
       try {
@@ -37,11 +37,11 @@ function useCurrency(currency) {
         if (Object.keys(validRates).length === 0) {
           throw new Error("No valid exchange rates were returned");
         }
-        if (!controller.signal.aborted) setData(validRates);
+        if (!controller.signal.aborted) setSnapshot({ base: currency, rates: validRates });
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Could not load exchange rates", error);
-          setData({});
+          setSnapshot({ base: currency, rates: {} });
         }
       }
     }
@@ -50,7 +50,7 @@ function useCurrency(currency) {
     return () => controller.abort();
   }, [currency]);
 
-  return data;
+  return snapshot.base === currency ? snapshot.rates : {};
 }
 
 export default useCurrency;
