@@ -1,0 +1,36 @@
+name: Currency Converter verification
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Currency Converter/**'
+      - '.github/workflows/currency-converter.yml'
+  pull_request:
+    paths:
+      - 'Currency Converter/**'
+      - '.github/workflows/currency-converter.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: Currency Converter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Currency Converter/package-lock.json
+      - name: Install locked application dependencies
+        run: npm ci
+      - name: Verify exchange-rate validation
+        run: node --test src/utils/validateRates.test.js
+      - name: Build production assets
+        run: npm run build
