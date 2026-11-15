@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { validateRates } from "../utils/validateRates";
 
 function useCurrency(currency) {
   const [snapshot, setSnapshot] = useState({ base: null, rates: {} });
@@ -15,28 +16,7 @@ function useCurrency(currency) {
         );
         if (!response.ok) throw new Error("Currency request failed");
         const result = await response.json();
-        if (
-          result?.result !== "success" ||
-          !result.rates ||
-          typeof result.rates !== "object" ||
-          Array.isArray(result.rates) ||
-          (result.base_code != null && result.base_code !== currency)
-        ) {
-          throw new Error("Currency response is unavailable");
-        }
-
-        const validRates = Object.fromEntries(
-          Object.entries(result.rates).filter(
-            ([code, rate]) =>
-              /^[A-Z]{3}$/.test(code) &&
-              typeof rate === "number" &&
-              Number.isFinite(rate) &&
-              rate > 0
-          )
-        );
-        if (Object.keys(validRates).length === 0) {
-          throw new Error("No valid exchange rates were returned");
-        }
+        const validRates = validateRates(result, currency);
         if (!controller.signal.aborted) setSnapshot({ base: currency, rates: validRates });
       } catch (error) {
         if (!controller.signal.aborted) {
