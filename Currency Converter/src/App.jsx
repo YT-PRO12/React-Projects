@@ -1,6 +1,7 @@
 import { useState } from "react";
 import CurrencyInput from "./components/currencyInput";
 import useCurrency from "./hooks/useCurrency";
+import { convertAmount } from "./utils/convertAmount";
 
 function App() {
 
@@ -18,36 +19,21 @@ function App() {
   const rates = useCurrency(fromCurrency);
 
   const convertCurrency = () => {
-    const numericAmount = Number(amount);
     const rate = fromCurrency === toCurrency ? 1 : rates[toCurrency];
-
-    if (String(amount).trim() === "" || !Number.isFinite(numericAmount) || numericAmount < 0) {
-      setError("Enter a valid, non-negative amount.");
+    try {
+      const formatted = convertAmount(amount, rate);
+      setError("");
+      setConversion({
+        amount: String(amount),
+        fromCurrency,
+        toCurrency,
+        rate,
+        result: formatted,
+      });
+    } catch (reason) {
       setConversion(null);
-      return;
+      setError(reason instanceof Error ? reason.message : "Conversion failed.");
     }
-
-    if (typeof rate !== "number" || !Number.isFinite(rate) || rate <= 0) {
-      setError("Exchange rates are unavailable. Please try again.");
-      setConversion(null);
-      return;
-    }
-
-    const result = numericAmount * rate;
-    if (!Number.isFinite(result)) {
-      setError("Amount is too large to convert.");
-      setConversion(null);
-      return;
-    }
-
-    setError("");
-    setConversion({
-      amount: String(amount),
-      fromCurrency,
-      toCurrency,
-      rate,
-      result: result.toFixed(2),
-    });
   };
 
   const currentConversion =
