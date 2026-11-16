@@ -31,6 +31,6 @@ jobs:
       - name: Install locked application dependencies
         run: npm ci
       - name: Verify exchange-rate validation
-        run: node --test src/utils/validateRates.test.js
+        run: node --test src/utils/*.test.js
       - name: Build production assets
         run: npm run build
