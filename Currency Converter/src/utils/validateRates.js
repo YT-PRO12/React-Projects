@@ -29,5 +29,11 @@ export function validateRates(payload, baseCurrency) {
   if (Object.keys(rates).length === 0) {
     throw new Error("No valid exchange rates were returned");
   }
+  // The provider must quote one unit of the requested base as itself.
+  // Reject a corrupted or incomplete snapshot rather than showing a plausible
+  // but internally inconsistent converted amount.
+  if (rates[baseCurrency] !== 1) {
+    throw new Error("Base currency unit rate is invalid");
+  }
   return rates;
 }
