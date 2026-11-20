@@ -9,7 +9,7 @@ export function convertAmount(rawAmount, rate) {
   const value = String(rawAmount).trim();
   // Accept only decimal notation (including scientific notation), not hex,
   // binary or octal strings that Number() would otherwise silently coerce.
-  const decimalAmount = /^\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?$/;
+  const decimalAmount = /^\+?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
   const amount = Number(value);
   if (!decimalAmount.test(value) || !Number.isFinite(amount) || amount < 0) {
     throw new RangeError("Enter a valid, non-negative amount.");
