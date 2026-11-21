@@ -29,5 +29,10 @@ export function validateRates(payload, baseCurrency) {
   if (Object.keys(rates).length === 0) {
     throw new Error("No valid exchange rates were returned");
   }
+  // A trustworthy base-currency snapshot must map the base back to 1.
+  // Missing or inconsistent self-rates can signal a corrupted provider payload.
+  if (rates[baseCurrency] !== 1) {
+    throw new Error("Currency response base rate is invalid");
+  }
   return rates;
 }
